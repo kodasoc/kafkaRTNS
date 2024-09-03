@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: notification-system
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic: notification-topics
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: notification_group
+      auto-offset-reset: earliest
+  main:
+    allow-bean-definition-overriding: true
