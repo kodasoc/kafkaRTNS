@@ -22,9 +22,6 @@ public class IntakeController {
         try{
             publisherService.send(request);
             Thread.sleep(10000);
-        }catch (JsonProcessingException e){
-            log.error("Exception Occured", e.getMessage());
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

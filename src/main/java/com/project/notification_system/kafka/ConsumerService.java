@@ -18,7 +18,7 @@ public class ConsumerService {
         return reactiveKafkaConsumerTemplate
                 .receiveAutoAck()
                 .map(consumerRecord -> consumerRecord.value())
-                .doOnNext(message -> System.out.println("Consumed message: " + message))
+                .doOnNext(message -> System.out.println("Consumeds message: " + message))
                 .doOnError(e -> System.err.println("Error consuming message: " + e.getMessage()));
     }
 
