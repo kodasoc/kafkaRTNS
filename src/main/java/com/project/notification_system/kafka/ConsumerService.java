@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.kafka.receiver.ReceiverRecord;
 
 @Service
 @RequiredArgsConstructor
@@ -16,10 +17,44 @@ public class ConsumerService {
 
     public Flux<String> consumeMessages() {
         return reactiveKafkaConsumerTemplate
-                .receiveAutoAck()
-                .map(consumerRecord -> consumerRecord.value())
-                .doOnNext(message -> System.out.println("Consumeds message: " + message))
+                .receiveAutoAck() // Receives messages as ReceiverRecord
+                .doOnNext(record -> System.out.println("Consumed message: " + record.value())) // Print the message value
+                .flatMap(record-> processMessage((ReceiverRecord<String, String>) record)) // Process each ReceiverRecord
                 .doOnError(e -> System.err.println("Error consuming message: " + e.getMessage()));
+    }
+
+
+    private Flux<String> processMessage(ReceiverRecord<String, String> record) {
+        String topic = record.topic();
+        String message = record.value();
+
+        // Custom processing based on the topic
+        return switch (topic) {
+            case "topic1" -> processTopic1(message);
+            case "topic2" -> processTopic2(message);
+            default -> processDefaultTopic(message);
+        };
+    }
+
+    // Processing logic for topic1
+    private Flux<String> processTopic1(String message) {
+        System.out.println("Processing Topic1 message: " + message);
+        // Add your specific logic for Topic1 here
+        return Flux.just(message);
+    }
+
+    // Processing logic for topic2
+    private Flux<String> processTopic2(String message) {
+        System.out.println("Processing Topic2 message: " + message);
+        // Add your specific logic for Topic2 here
+        return Flux.just(message);
+    }
+
+    // Default processing logic
+    private Flux<String> processDefaultTopic(String message) {
+        System.out.println("Processing Default Topic message: " + message);
+        // Default processing logic for other topics
+        return Flux.just(message);
     }
 
     // Initialize the consumption process (e.g., on application startup)
