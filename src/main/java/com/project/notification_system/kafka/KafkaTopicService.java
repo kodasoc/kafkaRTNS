@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class KafkaTopicService {
 
+    // NOT in USE anymore, as we created Confluent Topic
+
     private final AdminClient adminClient;
 
     @PostConstruct

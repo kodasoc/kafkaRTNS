@@ -1,10 +1,12 @@
 package com.project.notification_system.kafka;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.ReceiverRecord;
 
@@ -14,12 +16,14 @@ import reactor.kafka.receiver.ReceiverRecord;
 public class ConsumerService {
 
     private final ReactiveKafkaConsumerTemplate<String, String> reactiveKafkaConsumerTemplate;
+    private final Disposable consumeSubscription;
+
 
     public Flux<String> consumeMessages() {
         return reactiveKafkaConsumerTemplate
-                .receiveAutoAck() // Receives messages as ReceiverRecord
-                .doOnNext(record -> System.out.println("Consumed message: " + record.value())) // Print the message value
-                .flatMap(record-> processMessage((ReceiverRecord<String, String>) record)) // Process each ReceiverRecord
+                .receiveAutoAck()
+                .doOnNext(record -> System.out.println("Consumed message: " + record.value()))
+                .flatMap(record-> processMessage((ReceiverRecord<String, String>) record))
                 .doOnError(e -> System.err.println("Error consuming message: " + e.getMessage()));
     }
 
@@ -39,14 +43,12 @@ public class ConsumerService {
     // Processing logic for topic1
     private Flux<String> processTopic1(String message) {
         System.out.println("Processing Topic1 message: " + message);
-        // Add your specific logic for Topic1 here
         return Flux.just(message);
     }
 
     // Processing logic for topic2
     private Flux<String> processTopic2(String message) {
         System.out.println("Processing Topic2 message: " + message);
-        // Add your specific logic for Topic2 here
         return Flux.just(message);
     }
 
@@ -63,5 +65,14 @@ public class ConsumerService {
         log.info("Consumer Started");
         consumeMessages()
                 .subscribe();
+    }
+
+    // Delete pr clear the resources upon shutdown of service
+    @PreDestroy
+    public void stopConsuming() {
+        if (consumeSubscription != null && !consumeSubscription.isDisposed()) {
+            consumeSubscription.dispose();
+        }
+        log.info("Consumer Stopped");
     }
 }
