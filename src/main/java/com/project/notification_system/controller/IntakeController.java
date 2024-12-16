@@ -2,6 +2,7 @@ package com.project.notification_system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.notification_system.kafka.PublisherService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class IntakeController {
 
-    @Autowired
-    PublisherService publisherService;
+    private final PublisherService publisherService;
 
     @PostMapping("/notify")
     public ResponseEntity<Object> requestIntake(@RequestBody Object request) {

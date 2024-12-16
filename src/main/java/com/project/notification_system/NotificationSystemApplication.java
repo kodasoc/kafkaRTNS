@@ -9,15 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NotificationSystemApplication {
 
-	@Autowired
-    static IntakeController intakeController;
-
-static String p= "{\"strin\": \"yrs\"};";
-
 	public static void main(String[] args) {
 		SpringApplication.run(NotificationSystemApplication.class, args);
-
-				NotificationSystemApplication.intakeController.requestIntake(new ObjectMapper().convertValue(p,Object.class));
 	}
 
 }
