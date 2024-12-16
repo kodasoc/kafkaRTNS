@@ -17,7 +17,7 @@ public class IntakeController {
     @Autowired
     PublisherService publisherService;
 
-    @PostMapping("/intake")
+    @PostMapping("/notify")
     public ResponseEntity<Object> requestIntake(@RequestBody Object request) {
         try{
             publisherService.send(request);

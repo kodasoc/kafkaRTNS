@@ -2,9 +2,24 @@ spring:
   application:
     name: notification-system
   kafka:
-    bootstrap-servers: localhost:9092
-    topic: notification-topics
-
+    bootstrap-servers: pkc-56d1g.eastus.azure.confluent.cloud:9092
+    topic: notification_system1
+    properties:
+      schema:
+        registry:
+          url: https://psrc-o3gmx9.eastus.azure.confluent.cloud
+      basic:
+        auth:
+          credentials:
+            source: USER_INFO
+          user:
+            info: B636LUNVNSVAT2A6:ADZIXBwXFS/JmgdcBEbczcZ/Hm0lPloKfKo8ZBa5V2E0Qi/W3hWtlyMCltgIjURV
+      security:
+        protocol: SASL_SSL
+      sasl:
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="EWCNXKXSVOPR6AE6" password="Ma3uR9FbvXafuY+p3aRceBH/x3mMYkV20wgpY4v4pdDQ10GcMEXze6NA/7J+wDLn";
+        mechanism: PLAIN
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
