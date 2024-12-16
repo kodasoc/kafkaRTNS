@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.stereotype.Service;
-import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+import reactor.core.Disposable;
 import reactor.kafka.receiver.ReceiverRecord;
 
 @Service
@@ -16,8 +16,7 @@ import reactor.kafka.receiver.ReceiverRecord;
 public class ConsumerService {
 
     private final ReactiveKafkaConsumerTemplate<String, String> reactiveKafkaConsumerTemplate;
-    private final Disposable consumeSubscription;
-
+    private Disposable consumeSubscription;
 
     public Flux<String> consumeMessages() {
         return reactiveKafkaConsumerTemplate
@@ -26,7 +25,6 @@ public class ConsumerService {
                 .flatMap(record-> processMessage((ReceiverRecord<String, String>) record))
                 .doOnError(e -> System.err.println("Error consuming message: " + e.getMessage()));
     }
-
 
     private Flux<String> processMessage(ReceiverRecord<String, String> record) {
         String topic = record.topic();
@@ -55,7 +53,6 @@ public class ConsumerService {
     // Default processing logic
     private Flux<String> processDefaultTopic(String message) {
         System.out.println("Processing Default Topic message: " + message);
-        // Default processing logic for other topics
         return Flux.just(message);
     }
 
@@ -63,11 +60,11 @@ public class ConsumerService {
     @PostConstruct
     public void startConsuming() {
         log.info("Consumer Started");
-        consumeMessages()
+        consumeSubscription = consumeMessages()
                 .subscribe();
     }
 
-    // Delete pr clear the resources upon shutdown of service
+    // Stop the consumption process and clean up resources upon shutdown of service
     @PreDestroy
     public void stopConsuming() {
         if (consumeSubscription != null && !consumeSubscription.isDisposed()) {

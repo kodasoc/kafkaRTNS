@@ -13,6 +13,8 @@ import java.util.Map;
 @Configuration
 public class KafkaTopicConfig {
 
+    // NOT in USE anymore, as we created Confluent Topic
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
